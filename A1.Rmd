@@ -1,0 +1,202 @@
+---
+title: "2B03 Assignment 1"
+subtitle: "Tables, figures, and summary statistics"
+author: "Your Name and Student ID"
+date: "Date you started this assignment"
+output:
+  pdf_document: 
+    toc: TRUE
+---
+
+\newpage 
+
+# Goals
+
+By completing this assignment, you will:
+
+- learn how to edit text in R Markdown
+- learn to do basic computations using `R`
+- learn to compute summary statistics in `R`
+- learn how to load data in `R`
+- practice making frequency tables, histograms, and density estimates
+
+# Instructions
+
+Before you start, make sure that you:
+
+1. have completed Assignment 0, so you know that all software is installed properly
+2. have completed the tutorials on R and RStudio indicated during lectures (see slides)
+3. have attended the *Labs* lectures
+
+You will use R Markdown for generating your assignment output file. You begin with this R Markdown script downloaded from A2L. Make sure that it is placed in the same folder as the data set that came in the same `.zip`, and any data that you will download below. 
+
+Here are some basic rules:
+
+1. in the `YAML`, changed the `author` and `date` fields 
+2. leave all the text between `## Question` and `### Answer` unchanged and write your answers between `### Answer` and the next `## Question`
+3. for each question that involves `R` code, **do not only write R code**, but add at least one sentence before the code explaining what you are going to do, and at least one line after the R code interpreting the result
+4. check spelling before submissions (press F7, or click the "ABC" icon in the top left of the screen 
+5. assignments are graded as pass/resubmit/fail. Most likely, you will be asked to resubmit your assignment with corrections.
+6. once your assignment is complete: 
+    - *Knit* it to pdf. 
+    - print the resulting file
+    - hand in printed assignment at the start of the first lecture on the date that the assignment is due: see schedule.
+
+For information on how your submission will be evaluated, see the  `grading_instructions` file on A2L.
+
+\newpage 
+
+# Questions
+
+## Computing with your student ID
+
+Put the individual numbers in your student ID into a vector using `c()`, then compute the sum of those numbers using the `R` function `sum`. As an example of the first step, assuming that my student ID is `4275`.
+
+```{r}
+my_id <- c(4,2,7,5)
+```
+
+After you compute the sum of those numbers and print it to the screen, start a new code chunk where you take the square root of that sum, add 1, and store the result in a vector called `z`. Make sure the value of `z` is printed to the screen.
+
+### Answer
+
+...
+
+## Final grade and attendance
+
+Consider the following data set on the final grade received in a particular course (`grade`) and attendance (`attend`, number of times present when work was handed back during the semester out of a maximum of six times).
+
+```{r}
+course <- read.table("attend.RData")
+```
+
+Now -- in the answers section below -- create a scatter plot of the data with `attend` on the horizontal axis and `grades` on the vertical axis. Before you start, make sure that `tidyverse` is installed. If it is not yet installed, run the following code in your console:
+
+```{r, eval = FALSE}
+install.packages("tidyverse")
+```
+
+You need to do that only once. Now load the `tidyverse` package
+
+```{r}
+library(tidyverse)
+```
+
+You need to do this once in each `.Rmd` file. After you do this, you can use `ggplot` to create the scatter plot:
+
+```{r, eval = FALSE}
+ggplot(data = course) + geom_point(aes(x=attend,y=grade))
+```
+
+You can copy-and-paste that code over to the *Answer* section, just remember to remove the `, eval = FALSE` part. It prevents the code from running when you knit the file.
+
+Do you see any pattern present in the data? If so, describe it in your own words.
+
+### Answer
+
+...
+
+## Final grade and attendance (2)
+
+Continue with the data loaded in the previous question.
+
+In the answer section below, construct the average grades for persons attending 0 times, and then repeat for those attending 1 time, 2 times, and so on through 6 times using something like
+
+```{r, eval = FALSE}
+mean(course$grade[course$attend==0])
+```
+
+You can do that by copying-and-pasting the code above, but make sure to remove the `, eval = FALSE` bit in the top of the code chunk, because that prevents the code from running.
+
+Do you see any pattern present in the means? 
+
+### Answer
+
+...
+
+## American Community Survey
+
+This question covers all the code that you will need to complete the *Labour Force Survey* question in a future assignment.
+
+Before you start, make sure that `openintro` package is installed. If it is not yet installed, run the following code in your console:
+
+```{r, eval = FALSE}
+install.packages("openintro")
+```
+
+You need to do that only once. Now load the `openintro` package that you just installed:
+
+```{r}
+library(openintro)
+```
+
+The `openintro` package accompanies our *IMS* textbook. We will use the `acs12` data set in this package, which contains data from the American Community Survey (ACS). To load it, use the following code:
+
+```{r}
+data(acs12)
+```
+
+You can find information about this data set [here](https://www.openintro.org/data/index.php?data=acs12) and you can find more information about the ACS via  [Wikipedia](https://en.wikipedia.org/wiki/American_Community_Survey).
+
+We will use this data set to investigate income differences between individuals with (i) at most a high school education and (ii) a college degree. The following code creates a variable `educ_level` that is equal to "hs" for group (i) and equal to "ba" for group (ii). It then creates a data set `acs_all` and keeps only observations for which that variable is well-defined:
+
+```{r}
+acs12$educ_level = NA
+acs12$educ_level = ifelse(acs12$edu == "hs or lower","hs",acs12$educ_level)
+acs12$educ_level = ifelse(acs12$edu == "college","ba",acs12$educ_level)
+acs12$educ_level = as.factor(acs12$educ_level)
+acs_all <- acs12 %>% filter(!is.na(educ_level))
+```
+
+We will also use a subset of the data set for which `income` -- the annual income in US dollar -- is measured and not 0, called `acs_income`.
+
+```{r}
+acs_income <- acs_all %>% filter(income>0)
+```
+
+A list of questions follows. Please answer all the questions. You do not need to use a bullet or numbered list to answer them: instead, just start a new paragraph when you start a new question.
+
+Answer the following questions using `acs_all`
+
+1. make a cross table (contingency table) of `employment` and `educ_level`
+2. interpret the result
+
+Continue with the data in `acs_income`.
+
+1. compute the five-number summary for `income`
+2. compute the five-number summary for `income` for those in group (i) 
+3. repeat for those in group (ii) 
+4. interpret the difference between the results for the two groups
+5. according to Sturges' rule, how many classes should you use for `income`?
+6. make the resulting class frequency table
+7. make a histogram for `income` using basic `ggplot` code. does it follow Sturges' rule?
+8. make a density plot that colours by `educ_level`.
+9. based on the last question, what do you conclude about the income difference between the two groups?
+
+### Answer
+
+...
+
+## Age at first marriage 
+
+Make sure you have followed the instructions in the *American Community Survey* question to install and load the `openintro` package. The following code loads the `age_at_mar` data, and extracts the variable into a vector called `age_at_mar`. That vector contains the "age at first marriage of 5,534 US women who responded to the National Survey of Family Growth (NSFG) conducted by the CDC in the 2006 and 2010 cycle."
+
+```{r}
+data(age_at_mar)
+age_at_mar <- age_at_mar %>% pull(age)
+```
+
+Do not forget the ground rule of our assignments: that each chunk of `R` code should be preceded *and* followed by text. The text before a code chunk explains what is about to happen. The text after the code interprets the output.
+
+Compute the sample mean, median, and mode of the age at first marriage.
+
+Then, calculate the sample variance, standard deviation, and interquartile range.
+
+Next, using the `moments` package in R, does the coefficient of skewness indicate that the distribution is skewed to the left or to the right? You must install this package first. You need to do this only once, in the console. Then, load it via `library(moments)` in your answer before you call the function `skewness()`.
+
+Finally, using the `moments` package in R, does the coefficient of kurtosis indicate that the distribution of prices is more or less heavy tailed than the normal distribution?
+
+### Answer
+
+...
+
